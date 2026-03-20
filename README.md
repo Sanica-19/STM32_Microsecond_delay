@@ -38,34 +38,50 @@ System Clock: 84 MHz
 Timer Frequency: 1 MHz
 Resolution: 1 µs
 
-### Code Implementation
+## Code Implementation
 
-Start Timer
+### Start Timer
+
+```c
 HAL_TIM_Base_Start(&htim2);
-Starts TIM2 so that it begins counting. Without this, delay will not work.
+```
 
-Microsecond Delay Function
+Starts the timer so it begins counting. This step is necessary because the delay function depends on the timer value.
+
+---
+
+### Microsecond Delay Function
+
+```c
 while (1)
 {
     HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
     delay_us(100);
 }
+```
 
-Functionality:
+**Functionality:**
 
-If the pin is LOW, it becomes HIGH
-If the pin is HIGH, it becomes LOW
-By toggling the pin with a fixed delay, a square wave signal is generated.
+* When the pin is LOW, it switches to HIGH
+* When the pin is HIGH, it switches to LOW
+* Repeating this with a fixed delay produces a square wave
 
-Square Wave Generation
+---
+
+### Square Wave Generation
+
+```c
 void delay_us(uint32_t us)
 {
     __HAL_TIM_SET_COUNTER(&htim2, 0);
     while (__HAL_TIM_GET_COUNTER(&htim2) < us);
 }
+```
 
-Functionality:
+**Functionality:**
 
-Resets the timer counter to zero
-Waits until the timer reaches the specified value
-Since each count equals 1 µs, the delay is accurate
+* Resets the timer counter before starting
+* Waits until the counter reaches the required value
+* Since each count equals 1 µs, the delay is precise
+
+---
